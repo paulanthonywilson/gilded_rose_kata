@@ -163,7 +163,7 @@ describe "#update_quality" do
       end
     end
 
-    xcontext "conjured item" do
+    context "conjured item" do
       Given(:name) { "Conjured Mana Cake" }
 
       Invariant { expect(item.sell_in).to eq(initial_sell_in-1) }

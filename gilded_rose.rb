@@ -1,49 +1,102 @@
-def update_quality(items)
-  items.each do |item|
-    if item.name != 'Aged Brie' && item.name != 'Backstage passes to a TAFKAL80ETC concert'
-      if item.quality > 0
-        if item.name != 'Sulfuras, Hand of Ragnaros'
-          item.quality -= 1
-        end
-      end
+class ItemUpdater
+  def initialize(item)
+    @item = item
+  end
+
+  def update
+    update_quality
+    update_sell_in
+  end
+
+  def update_quality
+    if (@item.sell_in < 1)
+      update_quality_after_sell_in
     else
-      if item.quality < 50
-        item.quality += 1
-        if item.name == 'Backstage passes to a TAFKAL80ETC concert'
-          if item.sell_in < 11
-            if item.quality < 50
-              item.quality += 1
-            end
-          end
-          if item.sell_in < 6
-            if item.quality < 50
-              item.quality += 1
-            end
-          end
-        end
-      end
-    end
-    if item.name != 'Sulfuras, Hand of Ragnaros'
-      item.sell_in -= 1
-    end
-    if item.sell_in < 0
-      if item.name != "Aged Brie"
-        if item.name != 'Backstage passes to a TAFKAL80ETC concert'
-          if item.quality > 0
-            if item.name != 'Sulfuras, Hand of Ragnaros'
-              item.quality -= 1
-            end
-          end
-        else
-          item.quality = item.quality - item.quality
-        end
-      else
-        if item.quality < 50
-          item.quality += 1
-        end
-      end
+      update_quality_before_sell_in
     end
   end
+
+  def update_sell_in
+    @item.sell_in -= 1
+  end
+
+  def reduce_quality(by)
+    @item.quality = [@item.quality - by, 0].max
+  end
+
+  def increase_quality(by)
+    @item.quality = [@item.quality + by, 50].min
+  end
+end
+
+class NormalUpdater < ItemUpdater
+  def update_quality_before_sell_in
+    reduce_quality(1)
+  end
+
+  def update_quality_after_sell_in
+    reduce_quality(2)
+  end
+end
+
+class AgedBrieUpdater < ItemUpdater
+  def update_quality_before_sell_in
+    increase_quality(1)
+  end
+
+  def update_quality_after_sell_in
+    increase_quality(2)
+  end
+end
+
+class BackStageUpdater < ItemUpdater
+  def update_quality_before_sell_in
+    if @item.sell_in < 6
+      increase_quality(3)
+    elsif @item.sell_in < 11
+      increase_quality(2)
+    else
+      increase_quality(1)
+    end
+  end
+
+  def update_quality_after_sell_in
+    @item.quality = 0
+  end
+end
+
+class SulfurasUpdater < ItemUpdater
+  def update_quality
+  end
+
+  def update_sell_in
+  end
+end
+
+class ConjuredItemUpdater < ItemUpdater
+  def update_quality_before_sell_in
+    reduce_quality(2)
+  end
+
+  def update_quality_after_sell_in
+    reduce_quality(4)
+  end
+end
+
+def updater_for(item)
+  case item.name
+  when 'Aged Brie' then AgedBrieUpdater.new(item)
+  when 'Backstage passes to a TAFKAL80ETC concert' then BackStageUpdater.new(item)
+  when 'Sulfuras, Hand of Ragnaros' then SulfurasUpdater.new(item)
+  when 'Conjured Mana Cake' then ConjuredItemUpdater.new(item)
+  else NormalUpdater.new(item)
+  end
+end
+
+def update_quality(items)
+  items.each { |item|
+    updater = updater_for(item).update
+  }
 end
 
 # DO NOT CHANGE THINGS BELOW -----------------------------------------
