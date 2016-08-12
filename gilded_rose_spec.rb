@@ -107,6 +107,8 @@ describe "#update_quality" do
 
         context "at max quality" do
           Given(:initial_quality) { 50 }
+
+          Then { expect(item.quality).to eq(initial_quality) }
         end
       end
 
