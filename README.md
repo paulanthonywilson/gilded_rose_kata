@@ -4,9 +4,8 @@ This is a Ruby version of the Gilded Rose Kata, found
 [here](http://iamnotmyself.com/2011/02/13/refactor-this-the-gilded-rose-kata/).
 
 This is a refactorying kata, so you will be starting with a legacy
-code base.  To work the Kata, clone this git repository and checkout
-the tag 'start-here'. Read the description below for the "rules"
-involving this kata.
+code base.  To work the Kata, clone this git repository. Read the description
+below for the "rules" involving this kata.
 
 ## Changes from the original
 
@@ -43,9 +42,7 @@ Have a look at the Gemfile for all dependencies.
 
 ## Git Branches
 
-* The 'master' branch contains the starting point for the kata.  It is
-  also tagged as 'start-here'.
-
+* The 'master' branch contains the starting point for the kata.
 * The 'solution1' branch is my first solution for this kata.
 
 Hope you enjoy this.     -- Jim Weirich
